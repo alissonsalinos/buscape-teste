@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet" type="text/css">
+    <title>Listagem de Produtos - Carrinho de compras</title>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <img src="https://imagebuscape-a.akamaihd.net/material/logo-buscape.svg">
+            <a href="#">
+                <span class="icon-menu">
+                   <span class="qtd-carrinho">0</span>    
+                </span>
+            </a>
+        </div>
+    </header>
+    <div class="container" id="itens">
+
+            
+    </div>
+   <script src="js/jquery-3.3.1.js"></script>
+    <script>
+    var itensContainer = document.getElementById("itens")    
+    var arquivo = new XMLHttpRequest();
+    arquivo.open('GET', 'data.json');
+    arquivo.onload = function(){
+        var dados = JSON.parse(arquivo.responseText);
+        renderHtml(dados)
+    };
+    arquivo.send();
+
+    function numberToReal(numero) {
+    var numero = numero.toFixed(2).split('.');
+    numero[0] =  numero[0].split(/(?=(?:...)*$)/).join('.');
+    return numero.join(',');
+    }
+
+    function renderHtml(dado){
+        var htmlString = "";
+
+        for (i = 0; i < dado.items.length; i++) {
+            htmlString += `
+           <div rel= ${ dado.items[i].product.id }  class='box-item'>
+           
+           <div class="img-galeria">
+                <ul>
+           `;
+                for (ii = 0; ii < dado.items[i].product.images.length; ii++) {
+
+                      htmlString += `<li><img onerror="javascript: this.src='images/error.png';" src="${dado.items[i].product.images[ii]}"></li>`  
+                }
+           htmlString += `
+                </ul>
+            </div>
+            <div class="item">
+                    <img src="${dado.items[i].product.images[0]}">
+                    <h2 class="name">${dado.items[i].product.name }<span class="icon-heart-o"></span></h2>
+                    
+                    <span class="icon-caret-right"><span class="texto">melhor preço</span></span><br>
+                    <span class="cor-preco tam-parc">${dado.items[i].product.price.installments }x R$ <span class="tam-preco">${ numberToReal(dado.items[i].product.price.installmentValue) }</span></span><br>
+                    <span class="txt-parc">ou <span class="cor-preco">R$ ${numberToReal(dado.items[i].product.price.value) }</span> à vista</span>
+                    <button class="btn-carrinho texto">Adicionar ao carrinho <span class="icon-angle-right"></span></button>
+                    
+                    
+
+            </div>
+            <div class="clear"></div>
+        </div>
+                `     
+        }
+
+        itensContainer.insertAdjacentHTML('beforeend', htmlString);
+    }
+
+    </script>    
+</body>
+</html>
